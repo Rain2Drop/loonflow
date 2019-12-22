@@ -6,22 +6,42 @@ globals = {'title_result': title_result, 'content_result': content_result,
                    'last_flow_log': last_flow_log, 'participant_info_list': participant_info_list}
 
 """
-import requests
+from email.header import Header
+from email.mime.text import MIMEText
+import smtplib
+
+smtp_server = 'smtp.exmail.qq.com'  # 腾讯服务器地址
+from_addr = 'kai@ek12.com'
+password = 'pSz8kBhEokJFdPDL'  # # 腾讯QQ邮箱或腾讯企业邮箱必须使用授权码进行第三方登陆
 
 
-def demo_notice_script_call():
-    phone_list = []
-    email_list = []
+def email_notice_script_call():
+    email_set = set()
     for participant_info in participant_info_list:
-        phone_list.append(participant_info['phone'])
-        email_list.append(participant_info['email'])
-    # 此处为了演示，同时发送了短信和邮件，实际使用建议分开在不同脚本中发送不同类型的消息
-    sms_result = requests.post('http://xxxxx.com/sendsms', {'phone': phone_list, 'context': content_result}) #发送短信，需要你的企业内有提供发送短信的接口，当然你也可以自己实现这个接口的逻辑
-    mail_result = requests.post('http://xxxxx.com/sendemail', {'phone': email_list, 'context': content_result,'title': title_result}) #发送邮件，需要你的企业内有提供发送邮件的接口，当然你也可以自己实现这个接口的逻辑
-    if sms_result.json().get('code') == 0 and mail_result.json().get('code') == 0:
-        return True, ''
-    else:
-        return False, 'send_sms_result:{}, send_email_result:{}'.format(sms_result.json().get('msg'), mail_result.json().get('msg'))
+        email_set.add(participant_info['email'])
+
+    for email in email_set:
+        send_mail(email, title_result, content_result)
 
 
-demo_notice_script_call()
+def send_mail(to_addr, subject, context):
+    # 内容初始化，定义内容格式（普通文本，html）
+    msg = MIMEText(context, 'plain', 'utf-8')
+    msg['From'] = from_addr
+    msg['To'] = to_addr
+
+    # 邮件标题
+    msg['Subject'] = Header(subject, 'utf-8').encode()
+
+    # 服务端配置，账密登陆
+    server = smtplib.SMTP(smtp_server, 25)
+
+    # 登陆服务器
+    server.login(from_addr, password)
+
+    # 发送邮件及退出
+    server.sendmail(from_addr, [to_addr], msg.as_string())  # 发送地址需与登陆的邮箱一致
+    server.quit()
+
+
+email_notice_script_call()
