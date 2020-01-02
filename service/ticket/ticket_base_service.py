@@ -730,6 +730,8 @@ class TicketBaseService(BaseService):
                     field_value = field_value_obj.multi_username_value
                 elif field_type_id == CONSTANT_SERVICE.FIELD_TYPE_ATTACHMENT:
                     field_value = field_value_obj.char_value
+                elif field_type_id == CONSTANT_SERVICE.FIELD_TYPE_PIC:
+                    field_value = field_value_obj.char_value
 
             field_list.append(dict(field_key=key, field_name=custom_field_dict[key]['field_name'], field_value=field_value, order_id=custom_field_dict[key]['order_id'],
                                    field_type_id=custom_field_dict[key]['field_type_id'],
