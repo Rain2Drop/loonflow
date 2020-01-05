@@ -34,7 +34,7 @@ def send_mail(to_addr, subject, context):
     msg['Subject'] = Header(subject, 'utf-8').encode()
 
     # 服务端配置，账密登陆
-    server = smtplib.SMTP(smtp_server, 25)
+    server = smtplib.SMTP_SSL(smtp_server, 465)
 
     # 登陆服务器
     server.login(from_addr, password)
