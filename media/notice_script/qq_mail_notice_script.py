@@ -11,8 +11,9 @@ from email.mime.text import MIMEText
 import smtplib
 
 smtp_server = 'smtp.exmail.qq.com'  # 腾讯服务器地址
-from_addr = 'kai@ek12.com'
-password = 'pSz8kBhEokJFdPDL'  # # 腾讯QQ邮箱或腾讯企业邮箱必须使用授权码进行第三方登陆
+from_addr = 'system_noreply@ek12.com'
+with open('/run/secrets/smtp_password', 'rt') as f:
+    password = f.read().strip()
 
 
 def email_notice_script_call():

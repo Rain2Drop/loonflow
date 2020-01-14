@@ -3,9 +3,9 @@ import os
 
 from service.ticket.ticket_base_service import TicketBaseService
 
-MONGO_URI = os.environ['LOONFLOW_MONGO_URI']
-MONGO_DB_NAME = os.environ['LOONFLOW_MONGO_DB_NAME']
-LOONFLOW_YEE_URL = os.environ['LOONFLOW_YEE_URL']
+MONGO_URI = 'mongodb://host.docker.internal:20000'
+MONGO_DB_NAME = 'ekweb'
+LOONFLOW_YEE_URL = 'https://www.rain2drop.com/'
 
 
 def update_slides_make_ticket_field():
@@ -20,7 +20,6 @@ def update_slides_make_ticket_field():
 
     # 有参考视频的时候提供截图链接
     count = db['lessons'].count_documents({'topic': topic_id, 'internalOnly': True})
-    TicketBaseService.update_ticket_field_value(ticket_id, {'ref_lesson_count': count})
 
     if count > 0:
         lessons_doc = db['lessons'].find({'topic': topic_id, 'internalOnly': True})[0]
@@ -28,7 +27,6 @@ def update_slides_make_ticket_field():
         edit_slides_url = LOONFLOW_YEE_URL + 'yee/#/pcHome/editSlides/' + lesson_id
         TicketBaseService.update_ticket_field_value(ticket_id, {'edit_slides_url': edit_slides_url})
     else:
-        TicketBaseService.update_ticket_state(ticket_id, 16, '脚本')
-
+        TicketBaseService.update_ticket_state(ticket_id, 9, '脚本')
 
 update_slides_make_ticket_field()
