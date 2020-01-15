@@ -1,6 +1,5 @@
 import hashlib
 import os
-from datetime import datetime
 
 from service.ticket.ticket_base_service import TicketBaseService
 
@@ -33,10 +32,11 @@ def update_doc(user_name, topic_id, url, original_name):
 
     url_tokens = url.split("/")
     headers = {'Authorization': 'Bearer ' + token}
-    post_data = dict(id=topic_id, original_name=original_name, key=url_tokens[len(url_tokens) - 1],
-                     submitted=datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ'), refer=True)
-    requests.post(LOONFLOW_YEE_URL + 'yee/api/v1/users/' + user_name + '/topics/' + topic_id + '/docs',
-                  json=post_data, headers=headers)
+    post_data = dict(id=topic_id, original_name=original_name, key=url_tokens[len(url_tokens) - 1], refer=True)
+    resp = requests.post(LOONFLOW_YEE_URL + 'yee/api/v1/users/' + user_name + '/topics/' + topic_id + '/docs',
+                         json=post_data, headers=headers)
+    if not resp.ok:
+        raise Exception('更新Topic对应的课件信息失败')
 
 
 update_topic_doc()
