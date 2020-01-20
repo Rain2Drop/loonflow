@@ -659,6 +659,16 @@ class TicketBaseService(BaseService):
 
         ticket_result_dict = ticket_obj.get_dict()
         ticket_result_dict.update(dict(field_list=new_field_list, creator_info=creator_info))
+
+        # sub ticket ids
+        sub_tickets = TicketRecord.objects.filter(parent_ticket_id=ticket_id,
+                                                  parent_ticket_state_id=ticket_obj.state_id,
+                                                  is_deleted=0)
+        sub_ticket_ids = list()
+        for sub_ticket in sub_tickets:
+            sub_ticket_ids.append(sub_ticket.id)
+        ticket_result_dict.update(dict(state_sub_ticket_ids=sub_ticket_ids))
+
         return ticket_result_dict, ''
 
     @classmethod
